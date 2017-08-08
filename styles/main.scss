@@ -24,6 +24,7 @@ h1 {
 			display: inline-block;
 			border-radius: 5px;
 			box-sizing: border-box;
+			margin-right: 4px;
 		}
 	}
 	.indicator {
@@ -45,6 +46,7 @@ h1 {
 		transition: background 0.2s linear;
 		border: 1px solid $black;
 		padding: 2px 0px 0px 2px;
+		// margin-right: 4px;
 		&.active {
 			background-color: $black;
 			color: $white;

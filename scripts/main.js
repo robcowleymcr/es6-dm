@@ -3,7 +3,9 @@ let app = {
 	tempo: 100,
 	stepIntervalMs: null,
 	pos: 1,
+	totalSteps: 16,
 	kit : {}, //empty kit object (gets populated from kits.json on init)
+	sequence : [], //gets populated dynamically on init
 
 	createContext: function() {
 		try {
@@ -18,20 +20,19 @@ let app = {
 		}
 	},
 
-	loadSounds: function(obj) {
-
+	loadSounds: function(obj, callback) {
 		// iterate over sounds obj
 		for (var i in obj) {
-		if (obj.hasOwnProperty(i)) {
-			// load sound
-			this.loadSoundObj(obj[i]);
-			console.log(i + ' loaded');
+			if (obj.hasOwnProperty(i)) {
+				// load sound
+				this.loadSoundObj(obj[i]);
+				console.log(i + ' loaded');
 			}
 		}
+		this.populateGridHtml();
 	},
 
 	loadSoundObj: function(obj) {
-
 		var request = new XMLHttpRequest();
 
 		request.open('GET', obj.src, true);
@@ -47,19 +48,22 @@ let app = {
 		request.send();
 	},
 
-	padClick: function(el) {
-		$(el).toggleClass('active');
+	populateGridHtml: function() {
+		const kitObj = this.kit;
+		const kitSize = Object.keys(kitObj).length;
+		const indicatorsUl = $('.indicators');
+		const padsUl = $('.pads');
+		const grid = $('.grid');
+
+		for(var i = 0; i < this.totalSteps; i++) {
+			indicatorsUl.append('<li class="indicator"></li>');
+			padsUl.append('<li class="pad">' + (i + 1) + '</li>');
+		}
+		console.log('initialised sequencer grid');
 	},
 
-	transportBtnClick: function(el) {
-		var btnFunc = $(el).attr('data-transport');
-		// $(el).toggleClass('active');
-		if(btnFunc == "play") {
-			this.playSequence();
-		}
-		else if (btnFunc == "stop") {
-			this.stopSequence();
-		}
+	padClick: function(el) {
+		$(el).toggleClass('active');
 	},
 
 	init: function() {
@@ -67,11 +71,11 @@ let app = {
 		this.createContext();
 
 		$.getJSON("json/kits.json", function(json) {
-			this.kit = json;
-			console.log(this.kit); // this will show the info it in firebug console
+			app.kit = json;
 		})
 			.done(function(data) {
-				app.loadSounds(this.kit);
+				app.loadSounds(app.kit);
+				this.populateGridHtml;
 			});
 
 		this.stepIntervalMs = 60000 / this.tempo / 4;
@@ -79,11 +83,6 @@ let app = {
 		$('.pad').on('click', function() {
 			app.padClick(this);
 		});
-
-		$('.btn').on('click', function() {
-			app.transportBtnClick(this);
-		});
-
 	}
 }
 
