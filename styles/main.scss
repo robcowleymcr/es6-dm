@@ -1,5 +1,65 @@
 $heading-color: hotpink;
+$red: red;
+$black: black;
+$white: white;
+
+* {
+	-webkit-user-select: none; /* Chrome/Safari */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+	/* Rules below not implemented in browsers yet */
+	-o-user-select: none;
+	user-select: none;
+}
 
 h1 {
 	color: $heading-color;
+}
+
+.grid {
+	ul {
+		margin: 0px;
+		li {
+			width: 40px;
+			display: inline-block;
+			border-radius: 5px;
+			box-sizing: border-box;
+		}
+	}
+	.indicator {
+		text-align: center;
+		height: 20px;
+		&:after {
+			line-height: 10px;
+			content: "●";
+		}
+		&.pos {
+
+			color: $red;
+		}
+	}
+	.pad {
+		height: 40px;
+		font-size: 10px;
+		font-family: Helvetica;
+		transition: background 0.2s linear;
+		border: 1px solid $black;
+		padding: 2px 0px 0px 2px;
+		&.active {
+			background-color: $black;
+			color: $white;
+		}
+	}
+}
+.transport {
+	ul {
+		li {
+			list-style-type: none;
+		}
+	}
+	.btn {
+		&.active {
+			color: $red;
+		}
+	}
 }

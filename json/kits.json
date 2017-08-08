@@ -1,0 +1,11 @@
+{
+	"kick" :  {
+		"src" : "wav/kick.wav"
+	},
+	"snr" :  {
+		"src" : "wav/snr.wav"
+	},
+	"clap" :  {
+		"src" : "wav/clap.wav"
+	}
+}
