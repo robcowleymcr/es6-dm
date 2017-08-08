@@ -1,0 +1,12 @@
+{
+	"name": "",
+	"version": "",
+	"scripts": {
+		"start": "pingy dev",
+		"export": "pingy export"
+	},
+	"devDependencies": {
+		"@pingy/cli": "^0.6.14",
+		"node-sass": "^4.5.3"
+	}
+}
