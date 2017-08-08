@@ -13,7 +13,7 @@ let app = {
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			// create an AudioContext
 			context = new AudioContext();
-			console.log('context created');
+			console.log('audio context created');
 		} catch(e) {
 			// API not supported
 			throw new Error('Web Audio API not supported.');
@@ -60,6 +60,10 @@ let app = {
 			padsUl.append('<li class="pad">' + (i + 1) + '</li>');
 		}
 		console.log('initialised sequencer grid');
+
+		$('.pad').on('click', function() {
+			app.padClick(this);
+		});
 	},
 
 	padClick: function(el) {
@@ -70,19 +74,15 @@ let app = {
 		$('.tempo').append(app.tempo);
 		this.createContext();
 
-		$.getJSON("json/kits.json", function(json) {
+		$.getJSON('json/kits.json', function(json) {
 			app.kit = json;
+			console.log('json file loaded');
 		})
 			.done(function(data) {
 				app.loadSounds(app.kit);
 				this.populateGridHtml;
 			});
-
 		this.stepIntervalMs = 60000 / this.tempo / 4;
-
-		$('.pad').on('click', function() {
-			app.padClick(this);
-		});
 	}
 }
 
