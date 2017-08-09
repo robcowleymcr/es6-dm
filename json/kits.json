@@ -7,5 +7,11 @@
 	},
 	"clap" :  {
 		"src" : "wav/kick.wav"
+	},
+	"open_hat" :  {
+		"src" : "wav/kick.wav"
+	},
+	"closed_hat" :  {
+		"src" : "wav/kick.wav"
 	}
 }

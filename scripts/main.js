@@ -63,9 +63,8 @@ let app = {
 
 			var newUl = document.querySelector('[data-lane="' + a + '"]');
 
-			laneLabel.className = 'pad pad-label';
+			laneLabel.className = 'pad-label';
 			laneLabel.appendChild(laneLabelText);
-
 			newUl.appendChild(laneLabel);
 
 			for(var b = 1; b < 17; b++) {
@@ -75,12 +74,10 @@ let app = {
 				pad.className = 'pad';
 				pad.appendChild(text);
 				pad.dataset.drum = a;
-
 				ul.appendChild(pad);
 			}
 		}
-
-		$('.pad').on('click', function() {
+		$('.pad').on('tap', function() {
 			app.padClick(this);
 		});
 	},
@@ -99,7 +96,6 @@ let app = {
 		})
 			.done(function(data) {
 				app.loadSounds(app.kit);
-				// this.populateGridHtml;
 			});
 		this.stepIntervalMs = 60000 / this.tempo / 4;
 	}
