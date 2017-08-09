@@ -13,5 +13,8 @@
 	},
 	"closed_hat" :  {
 		"src" : "wav/kick.wav"
+	},
+	"perc" :  {
+		"src" : "wav/kick.wav"
 	}
 }

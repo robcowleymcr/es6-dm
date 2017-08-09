@@ -77,7 +77,7 @@ let app = {
 				ul.appendChild(pad);
 			}
 		}
-		$('.pad').on('tap', function() {
+		$('.pad').on('touchstart', function() {
 			app.padClick(this);
 		});
 	},
