@@ -20,36 +20,58 @@ h1 {
 	ul {
 		margin: 0px;
 		li {
-			width: 40px;
+			width: 10%;
 			display: inline-block;
 			border-radius: 5px;
 			box-sizing: border-box;
 			margin-right: 4px;
 		}
 	}
-	.indicator {
-		text-align: center;
+	.indicators {
 		height: 20px;
-		&:after {
-			line-height: 10px;
-			content: "●";
+		display: flex;
+		.indicator {
+			text-align: center;
+			&:after {
+				line-height: 10px;
+				content: "●";
+			}
+			&.pos {
+				color: $red;
+			}
 		}
-		&.pos {
-
-			color: $red;
+		.label-spacer {
+			min-width: 60px;
+			width: 100px;
+			&:after {
+				content: "";
+			}
 		}
 	}
-	.pad {
+	.pads {
 		height: 40px;
-		font-size: 10px;
-		font-family: Helvetica;
-		transition: background 0.2s linear;
-		border: 1px solid $black;
-		padding: 2px 0px 0px 2px;
-		// margin-right: 4px;
-		&.active {
-			background-color: $black;
-			color: $white;
+		display: flex;
+		margin-bottom: 4px;
+		.pad {
+			height: 40px;
+			font-size: 10px;
+			font-family: Helvetica;
+			transition: background 0.2s linear;
+			border: 1px solid $black;
+			padding: 2px 0px 0px 2px;
+			&.active {
+				background-color: $black;
+				color: $white;
+			}
+			&.pad-label {
+				line-height: 40px;
+				min-width: 60px;
+				border: none;
+				width: 100px;
+				font-size: 14px;
+				text-align: right;
+				padding-right: 10px;
+			}
 		}
 	}
 }

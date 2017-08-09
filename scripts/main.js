@@ -29,7 +29,7 @@ let app = {
 				console.log(i + ' loaded');
 			}
 		}
-		this.populateGridHtml();
+		// this.populateGridHtml();
 	},
 
 	loadSoundObj: function(obj) {
