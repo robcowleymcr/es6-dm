@@ -29,7 +29,7 @@ let app = {
 				console.log(i + ' loaded');
 			}
 		}
-		// this.populateGridHtml();
+		this.populateGridHtml();
 	},
 
 	loadSoundObj: function(obj) {
@@ -50,16 +50,35 @@ let app = {
 
 	populateGridHtml: function() {
 		const kitObj = this.kit;
-		const kitSize = Object.keys(kitObj).length;
-		const indicatorsUl = $('.indicators');
-		const padsUl = $('.pads');
-		const grid = $('.grid');
+		var grid = document.getElementById("grid");
 
-		for(var i = 0; i < this.totalSteps; i++) {
-			indicatorsUl.append('<li class="indicator"></li>');
-			padsUl.append('<li class="pad">' + (i + 1) + '</li>');
+		for(var a in kitObj) {
+			var ul = document.createElement("ul");
+			var laneLabel = document.createElement("li");
+			var laneLabelText = document.createTextNode(a);
+
+			ul.className = 'pads';
+			ul.dataset.lane = a;
+			grid.appendChild(ul);
+
+			var newUl = document.querySelector('[data-lane="' + a + '"]');
+
+			laneLabel.className = 'pad pad-label';
+			laneLabel.appendChild(laneLabelText);
+
+			newUl.appendChild(laneLabel);
+
+			for(var b = 1; b < 17; b++) {
+				var pad = document.createElement("li");
+				var text = document.createTextNode(b);
+
+				pad.className = 'pad';
+				pad.appendChild(text);
+				pad.dataset.drum = a;
+
+				ul.appendChild(pad);
+			}
 		}
-		console.log('initialised sequencer grid');
 
 		$('.pad').on('click', function() {
 			app.padClick(this);
@@ -80,7 +99,7 @@ let app = {
 		})
 			.done(function(data) {
 				app.loadSounds(app.kit);
-				this.populateGridHtml;
+				// this.populateGridHtml;
 			});
 		this.stepIntervalMs = 60000 / this.tempo / 4;
 	}

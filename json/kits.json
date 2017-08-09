@@ -3,15 +3,9 @@
 		"src" : "wav/kick.wav"
 	},
 	"snr" :  {
-		"src" : "wav/snr.wav"
+		"src" : "wav/kick.wav"
 	},
 	"clap" :  {
-		"src" : "wav/clap.wav"
-	},
-	"c_hat" :  {
-		"src" : "wav/c_hat.wav"
-	},
-	"o_hat" :  {
-		"src" : "wav/o_hat.wav"
+		"src" : "wav/kick.wav"
 	}
 }
