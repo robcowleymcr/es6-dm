@@ -49,6 +49,7 @@ body {
 			&:after {
 				line-height: 10px;
 				content: "●";
+				font-size: 20px;
 			}
 			&.pos {
 				color: $red;
@@ -75,6 +76,9 @@ body {
 			&.active {
 				background-color: $dark-grey;
 				color: $light-grey;
+				&.on {
+					background-color: $red;
+				}
 			}
 		}
 		.pad-label {

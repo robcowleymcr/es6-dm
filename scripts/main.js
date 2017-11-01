@@ -3,11 +3,11 @@ var app = {
 	swingIntervalMs: null,
 	swingIntervalA: null,
 	swingIntervalB: null,
-	tempo: 124, //tempo in BPM
-	swing: true, //specifies whether pattern plays back with swing
-	swingAmount: 69, //percentage
-	current: 0, //current position in sequence
-	seqLength: 16, //number of steps in sequence
+	tempo: 100, // tempo in BPM
+	swing: true, // specifies whether pattern plays back with swing
+	swingAmount: 69, // percentage
+	current: 0, // current position in sequence
+	seqLength: 16, // number of steps in sequence
 	play: false,
 	loop: true,
 	swing: false,
@@ -15,8 +15,10 @@ var app = {
 	hardHitVol: 1.0,
 	kit : {}, // empty kit object (gets populated from kits.json on init)
 	sequence : {
-		kick:  [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
-		snr:   [0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
+		kick:  [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
+		snr:   [0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
+		c_hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+		o_hat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	},
 
 	createContext: function() {
@@ -25,6 +27,13 @@ var app = {
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
 			// create an AudioContext
 			context = new AudioContext();
+			filter = context.createBiquadFilter();
+			filter.type = 3;
+			filter.frequency.value = 20000;
+			filter.Q.value = 0;
+			filter.gain.value = 0;
+			filter.connect(context.destination);
+
 			console.log('audio context created');
 		} catch(e) {
 			// API not supported
@@ -60,48 +69,83 @@ var app = {
 		request.send();
 	},
 
+	resetPattern: function() {
+		var seq = app.sequence;
+		for(var a in seq) {
+			for(var i = 0; i < seq[a].length; i++) {
+				app.sequence[a][i] = 0;
+			}
+		}
+		console.dir(app.sequence);
+		app.populateLanes();
+	},
+
 	playSequence: function() {
-		for(var drum in app.kit) {
-			var val = app.sequence[drum][app.current]; //1 or zero depending on position in sequence
-			var buff = app.kit[drum].buffer;
+		if(app.play == true) {
+			for(var drum in app.kit) {
+				var val = app.sequence[drum][app.current]; //1 or zero depending on position in sequence
+				var buff = app.kit[drum].buffer;
 
-			app.highlightGridPosition(drum);
-			app.stepCounter();
+				app.highlightGridPosition();
 
-			//calls playSnd if sequence value is 1 or 2
-			// if(val == 2) {
-			// 	app.playSnd(buff, app.hardHitVol);
-			// }
-			// else if(val == 1) {
-			// 	app.playSnd(buff, app.softHitVol);
-			// }
-			if(val == 1) {
-				app.playSnd(buff);
+				if(val == 1) {
+					app.playSnd(buff);
+				}
 			}
-		}
-		if(!app.swing) {
-			if((++app.current < app.seqLength)) {
-				setTimeout(app.playSequence, app.stepIntervalMs);
+			if(!app.swing) {
+				if((++app.current < app.seqLength)) {
+					setTimeout(app.playSequence, app.stepIntervalMs);
+				}
+				else if (app.loop == 1) {
+					setTimeout(app.playSequence, app.stepIntervalMs);
+					app.current = 0;
+				}
 			}
-			else if (app.loop == 1) {
-				setTimeout(app.playSequence, app.stepIntervalMs);
-				app.current = 0;
-			}
-		}
-		else {
-			if((++app.current < app.seqLength)) {
-				if(app.current % 2 == 0) {
+			else {
+				if((++app.current < app.seqLength)) {
+					if(app.current % 2 == 0) {
+						setTimeout(app.playSequence, app.swingIntervalB);
+					}
+					else {
+						setTimeout(app.playSequence, app.swingIntervalA);
+					}
+				}
+				else if (app.loop == 1) {
 					setTimeout(app.playSequence, app.swingIntervalB);
+					app.current = 0;
 				}
-				else {
-					setTimeout(app.playSequence, app.swingIntervalA);
-				}
-			}
-			else if (app.loop == 1) {
-				setTimeout(app.playSequence, app.swingIntervalB);
-				app.current = 0;
 			}
 		}
+	},
+
+	stopSequence: function() {
+		app.current = 0;
+		app.highlightGridPosition();
+	},
+
+	highlightGridPosition: function(drum) {
+
+		var indicatorEls = document.querySelectorAll('.indicator');
+		var currentPosIndicator = indicatorEls[app.current];
+		var pads = document.querySelectorAll('[data-drum]');
+
+		for(var i = 0; i < indicatorEls.length; i++) {
+			var classList = indicatorEls[i].classList;
+			classList.remove('pos');
+			// for(var a in pads)
+		}
+		currentPosIndicator.className += ' pos';
+	},
+
+	playSnd: function(buffer) { //plays sound buffer when called
+		var source = context.createBufferSource();
+		// var gainNode = context.createGain();
+
+		source.buffer = buffer;
+		source.connect(filter);
+		// gainNode.connect(context.destination);
+		// gainNode.gain.value = vol;
+		source.start(0);
 	},
 
 	padClick: function(el) {
@@ -124,7 +168,7 @@ var app = {
 		for(var a in kitObj) {
 			var ul = document.createElement('ul');
 			var laneLabel = document.createElement('li');
-			var laneLabelText = document.createTextNode(a);
+			var laneLabelText = document.createTextNode(kitObj[a].label);
 
 			ul.className = 'pads';
 			ul.dataset.lane = a;
@@ -159,7 +203,10 @@ var app = {
 			var length = currentLane.length;
 			for(var i = 0; i < length; i++) {
 				if(currentLane[i] == 1) {
-					seqLanePadEls[i].className += ' active';
+					seqLanePadEls[i].classList.add('active');
+				}
+				else {
+					seqLanePadEls[i].classList.remove('active');
 				}
 			}
 		}
@@ -167,6 +214,46 @@ var app = {
 
 	init: function() {
 		$('.tempo').append(app.tempo);
+		$('.dial').knob({
+			'min': 0,
+			'max': 100,
+			'angleOffset': -140,
+			'angleArc': 280,
+			'bgColor': '#ebebeb',
+			'fgColor': '#666666',
+			'change' : 	function (v) {
+					// position will be between 0 and 100
+					var minp = 0;
+					var maxp = 100;
+
+					// The result should be between 20 an 20000
+					var minv = Math.log(20);
+					var maxv = Math.log(20000);
+
+					// calculate adjustment factor
+					var scale = (maxv-minv) / (maxp-minp);
+					var logVal = Math.exp(minv + scale*(v-minp));
+
+					filter.frequency.value = Math.floor(logVal);
+				}
+		});
+		document.querySelector('[data-button="play"]').addEventListener('click', function() {
+			if(app.play !== true) {
+				app.play = true;
+				app.playSequence();
+			}
+		});
+		document.querySelector('[data-button="pause"]').addEventListener('click', function() {
+			app.play = false;
+		});
+		document.querySelector('[data-button="stop"]').addEventListener('click', function() {
+			app.play = false;
+			app.stopSequence();
+		});
+		document.querySelector('[data-button="reset"]').addEventListener('click', function() {
+			app.resetPattern();
+		});
+
 		this.createContext();
 
 		$.getJSON('json/kits.json', function(json) {

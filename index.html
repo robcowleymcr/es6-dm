@@ -36,12 +36,22 @@
 				<li class="tempo">Tempo: </li>
 			</ul>
 			<ul>
-				<li data-transport="play" class="btn play">Play</li>
-				<li data-transport="pause" class="btn pause">Pause</li>
-				<li data-transport="stop" class="btn stop">Stop</li>
+				<li data-button="play" class="btn play">Play</li>
+				<li data-button="pause" class="btn pause">Pause</li>
+				<li data-button="stop" class="btn stop">Stop</li>
+				<li data-button="reset" class="btn reset">Reset</li>
+			</ul>
+			<ul class="dials">
+				<li>
+					<input type="text" value="100" class="dial">
+				</li>
+				<li>
+					<input type="text" value="100" class="dial">
+				</li>
 			</ul>
 		</div>
 		<script src="scripts/jquery.js"></script>
+		<script src="scripts/jquery.knob.min.js"></script>
 		<script src="scripts/main.js"></script>
 	</body>
 </html>

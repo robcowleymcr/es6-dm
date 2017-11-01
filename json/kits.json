@@ -1,8 +1,18 @@
 {
 	"kick" :  {
-		"src" : "wav/kick.wav"
+		"src" : "wav/kick.wav",
+		"label" : "Kick"
 	},
 	"snr" :  {
-		"src" : "wav/snr.wav"
+		"src" : "wav/snr.wav",
+		"label" : "Snare"
+	},
+	"c_hat" :  {
+		"src" : "wav/c_hat.wav",
+		"label" : "Closed Hat"
+	},
+	"o_hat" :  {
+		"src" : "wav/o_hat.wav",
+		"label" : "Open Hat"
 	}
 }
