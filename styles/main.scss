@@ -26,10 +26,14 @@ body {
 	width: 100%;
 	background-color: $darker-grey;
 	position: relative;
+	h1 {
+		position: absolute;
+		color: $lighter-grey;
+	}
 }
 
 .grid {
-	/*padding-right: 50px;*/
+	padding-right: 40px;
 	padding-top: 20px;
 	ul {
 		margin: 0px;
@@ -99,13 +103,41 @@ body {
 	background-color: $lighter-grey;
 }
 .transport {
+	text-align: center;
 	ul {
+		margin: 50px;
 		li {
 			list-style-type: none;
+			width: 200px;
+			text-align: center;
+			&.pressed {
+				background-color: $dark-grey;
+				color: $light-grey;
+			}
+		}
+	}
+	.dials {
+		li {
+			display: inline-block;
+			margin-right: 50px;
+			position: relative;
+			span {
+				position: absolute;
+				/*border: 1px solid black;*/
+				width: 100%;
+				left: 0px;
+				top: 170px;
+			}
+		}
+		li:last-of-type {
+			margin-right: 0px;
+		}
+		input {
+			font-size: 32px;
 		}
 	}
 	.btn {
-		border: 1px solid black;
+		border: 1px solid $dark-grey;
 		width: 122px;
 		height: 40px;
 		line-height: 40px;

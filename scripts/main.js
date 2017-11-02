@@ -1,24 +1,40 @@
 var app = {
 	context: null, // audio context instance
-	swingIntervalMs: null,
+	stepIntervalMs: null,
 	swingIntervalA: null,
 	swingIntervalB: null,
-	tempo: 100, // tempo in BPM
-	swing: true, // specifies whether pattern plays back with swing
+	filterControlVal: 100, // default value for filter knob
+	tempo: 124, // tempo in BPM
+	swing: false, // specifies whether pattern plays back with swing
 	swingAmount: 69, // percentage
 	current: 0, // current position in sequence
 	seqLength: 16, // number of steps in sequence
 	play: false,
 	loop: true,
-	swing: false,
+	swing: true,
 	softHitVol: 0.4,
 	hardHitVol: 1.0,
 	kit : {}, // empty kit object (gets populated from kits.json on init)
 	sequence : {
-		kick:  [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0],
-		snr:   [0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0],
-		c_hat: [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0],
+		kick:  [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+		snr:   [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+		c_hat: [0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0],
 		o_hat: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	},
+
+	logSeq: function() {},
+
+	calcStepInterval: function() {
+
+		var step = app.stepIntervalMs;
+		var a = (app.swingAmount / 100) * 0.4; // 0.4 sets upper maximum amount of swing (any more sounds too loose)
+		// console.log(app.swingIntervalA);
+		// console.log(app.swingIntervalB);
+		app.stepIntervalMs = Math.round(60000 / app.tempo / (app.seqLength / 4));
+		app.swingIntervalA = Math.round(step + (step * a));
+		app.swingIntervalB = Math.round(step - (step * a));
+		console.log(app.swingIntervalA);
+		console.log(app.swingIntervalB);
 	},
 
 	createContext: function() {
@@ -81,6 +97,7 @@ var app = {
 	},
 
 	playSequence: function() {
+		console.log(app.swing);
 		if(app.play == true) {
 			for(var drum in app.kit) {
 				var val = app.sequence[drum][app.current]; //1 or zero depending on position in sequence
@@ -124,7 +141,6 @@ var app = {
 	},
 
 	highlightGridPosition: function(drum) {
-
 		var indicatorEls = document.querySelectorAll('.indicator');
 		var currentPosIndicator = indicatorEls[app.current];
 		var pads = document.querySelectorAll('[data-drum]');
@@ -132,19 +148,14 @@ var app = {
 		for(var i = 0; i < indicatorEls.length; i++) {
 			var classList = indicatorEls[i].classList;
 			classList.remove('pos');
-			// for(var a in pads)
 		}
-		currentPosIndicator.className += ' pos';
+		currentPosIndicator.classList.add('pos');
 	},
 
-	playSnd: function(buffer) { //plays sound buffer when called
+	playSnd: function(buffer) { // plays sound buffer when called
 		var source = context.createBufferSource();
-		// var gainNode = context.createGain();
-
 		source.buffer = buffer;
 		source.connect(filter);
-		// gainNode.connect(context.destination);
-		// gainNode.gain.value = vol;
 		source.start(0);
 	},
 
@@ -214,41 +225,90 @@ var app = {
 
 	init: function() {
 		$('.tempo').append(app.tempo);
-		$('.dial').knob({
+		$('[data-dial="filter"]').knob({
 			'min': 0,
 			'max': 100,
 			'angleOffset': -140,
 			'angleArc': 280,
 			'bgColor': '#ebebeb',
 			'fgColor': '#666666',
-			'change' : 	function (v) {
-					// position will be between 0 and 100
-					var minp = 0;
-					var maxp = 100;
+			'change': 	function (v) {
+				// position will be between 0 and 100
+				var minp = 0;
+				var maxp = 100;
 
-					// The result should be between 20 an 20000
-					var minv = Math.log(20);
-					var maxv = Math.log(20000);
+				// The result should be between 20 an 20000
+				var minv = Math.log(20);
+				var maxv = Math.log(20000);
 
-					// calculate adjustment factor
-					var scale = (maxv-minv) / (maxp-minp);
-					var logVal = Math.exp(minv + scale*(v-minp));
+				// calculate adjustment factor
+				var scale = (maxv-minv) / (maxp-minp);
+				var logVal = Math.exp(minv + scale*(v-minp));
 
-					filter.frequency.value = Math.floor(logVal);
-				}
+				filter.frequency.value = Math.floor(logVal);
+			},
+			'draw': function() {
+				$(this.i).css('font-size', '20pt');
+			},
+			'format': function(v) {
+				return v + '%';
+			}
 		});
-		document.querySelector('[data-button="play"]').addEventListener('click', function() {
+		$('[data-dial="tempo"]').knob({
+			'min': 40,
+			'max': 220,
+			'angleOffset': -140,
+			'angleArc': 280,
+			'bgColor': '#ebebeb',
+			'fgColor': '#666666',
+			'change': function (v) {
+				var roundedVal = Math.floor(v);
+				app.tempo = v;
+				app.calcStepInterval();
+			},
+			'draw': function() {
+				$(this.i).css('font-size', '20pt');
+			},
+			'format': function(v) {
+				return v + 'bpm';
+			}
+		});
+		$('[data-dial="swing"]').knob({
+			'min': 0,
+			'max': 100,
+			'angleOffset': -140,
+			'angleArc': 280,
+			'bgColor': '#ebebeb',
+			'fgColor': '#666666',
+			'change': 	function (v) {
+				app.swingAmount = v;
+				app.calcStepInterval();
+			},
+			'draw': function() {
+				$(this.i).css('font-size', '20pt');
+			},
+			'format': function(v) {
+				return v + '%';
+			}
+		});
+		document.querySelector('[data-button="play"]').addEventListener('click', function(e) {
 			if(app.play !== true) {
 				app.play = true;
 				app.playSequence();
+				e.target.classList.add('pressed');
+				document.querySelector('[data-button="stop"]').classList.remove('pressed');
 			}
 		});
 		document.querySelector('[data-button="pause"]').addEventListener('click', function() {
 			app.play = false;
+			document.querySelector('[data-button="play"]').classList.remove('pressed');
 		});
-		document.querySelector('[data-button="stop"]').addEventListener('click', function() {
+		document.querySelector('[data-button="stop"]').addEventListener('click', function(e) {
+			if(app.play == true)
 			app.play = false;
 			app.stopSequence();
+			document.querySelector('[data-button="play"]').classList.remove('pressed');
+			e.target.classList.add('pressed');
 		});
 		document.querySelector('[data-button="reset"]').addEventListener('click', function() {
 			app.resetPattern();
@@ -263,6 +323,7 @@ var app = {
 			app.loadSounds(app.kit);
 		});
 		this.stepIntervalMs = 60000 / this.tempo / 4;
+		this.calcStepInterval();
 	}
 }
 

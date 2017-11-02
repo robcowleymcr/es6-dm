@@ -8,7 +8,9 @@
 		<link rel="stylesheet" href="styles/main.css">
 	</head>
 	<body>
-		<div class="top-bar"></div>
+		<div class="top-bar">
+			<!-- <h1>RC-881</h1> -->
+		</div>
 		<div class="grid" id="grid">
 			<ul class="indicators">
 				<li class="label-spacer"></li>
@@ -33,9 +35,6 @@
 
 		<div class="transport">
 			<ul>
-				<li class="tempo">Tempo: </li>
-			</ul>
-			<ul>
 				<li data-button="play" class="btn play">Play</li>
 				<li data-button="pause" class="btn pause">Pause</li>
 				<li data-button="stop" class="btn stop">Stop</li>
@@ -43,10 +42,16 @@
 			</ul>
 			<ul class="dials">
 				<li>
-					<input type="text" value="100" class="dial">
+					<input type="text" value="100" class="dial" data-dial="filter">
+					<span>Filter</span>
 				</li>
 				<li>
-					<input type="text" value="100" class="dial">
+					<input type="text" value="124" class="dial" data-dial="tempo">
+					<span>Tempo</span>
+				</li>
+				<li>
+					<input type="text" value="69" class="dial" data-dial="swing">
+					<span>Swing</span>
 				</li>
 			</ul>
 		</div>
