@@ -29,6 +29,14 @@ body {
 	h1 {
 		position: absolute;
 		color: $lighter-grey;
+		left: 130px;
+	}
+	h3 {
+		position: absolute;
+		color: #f2f2f2;
+		right: 50px;
+		top: 11px;
+		font-weight: 100;
 	}
 }
 
@@ -70,7 +78,6 @@ body {
 		height: 50px;
 		display: flex;
 		margin-bottom: 14px;
-		/*font-family: Helvetica;*/
 		.pad {
 			font-size: 10px;
 			background-color: $light-grey;

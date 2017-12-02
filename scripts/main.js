@@ -33,8 +33,6 @@ var app = {
 		app.stepIntervalMs = Math.round(60000 / app.tempo / (app.seqLength / 4));
 		app.swingIntervalA = Math.round(step + (step * a));
 		app.swingIntervalB = Math.round(step - (step * a));
-		console.log(app.swingIntervalA);
-		console.log(app.swingIntervalB);
 	},
 
 	createContext: function() {
@@ -49,7 +47,6 @@ var app = {
 			filter.Q.value = 0;
 			filter.gain.value = 0;
 			filter.connect(context.destination);
-
 			console.log('audio context created');
 		} catch(e) {
 			// API not supported
@@ -97,7 +94,6 @@ var app = {
 	},
 
 	playSequence: function() {
-		console.log(app.swing);
 		if(app.play == true) {
 			for(var drum in app.kit) {
 				var val = app.sequence[drum][app.current]; //1 or zero depending on position in sequence
